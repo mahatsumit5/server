@@ -1,22 +1,20 @@
 import express from "express";
-import { addSkills, findByUserId, updateSkills } from "../model/skillsModel.js";
+import { addSkills, findByFilter, updateSkills } from "../model/skillsModel.js";
 
 const router = express.Router();
 
 router.post("/", async (req, res, next) => {
   try {
-    console.log(req.body);
     const { user } = req.body;
-    console.log(user);
-    const { _id, skill } = await findByUserId({ user });
-    console.log(_id);
+    console.log(typeof user);
+    const { _id, skill } = await findByFilter({ user });
+    console.log(skill);
     if (_id) {
       const obj = [...skill, req.body.skill];
-
-      const result = await updateSkills({ _id, obj });
+      const result = await updateSkills(_id, obj);
       result?._id
         ? res.json({
-            message: `new poseted`,
+            message: `ANew skill had been added`,
           })
         : res.status(409).send("error");
       return;
@@ -32,7 +30,31 @@ router.post("/", async (req, res, next) => {
           message: "Unable to post skills",
         });
   } catch (error) {
-    console.log(error);
+    res.json({
+      status: "error",
+      message: "Error occured",
+    });
+  }
+});
+
+router.get("/:user", async (req, res, next) => {
+  try {
+    // console.log(req.params);
+    const { user } = req.params;
+    console.log(typeof user);
+    const data = await findByFilter({ user });
+    console.log(data);
+    data?._id
+      ? res.json({
+          message: "Skills found",
+          data,
+        })
+      : res.json({ message: "no record" });
+  } catch (error) {
+    res.json({
+      status: "error",
+      message: error,
+    });
   }
 });
 export default router;

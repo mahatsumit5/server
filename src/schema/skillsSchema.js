@@ -1,13 +1,19 @@
 import mongoose from "mongoose";
-const skillSchema = mongoose.Schema({
-  skill: [
-    {
-      type: String,
+const skillSchema = mongoose.Schema(
+  {
+    skill: [
+      {
+        type: String,
+        unique: true,
+      },
+    ],
+    user: {
+      type: mongoose.Types.ObjectId,
+      required: true,
+      unique: true,
+      index: 1,
     },
-  ],
-  user: {
-    type: mongoose.Types.ObjectId,
-    required: true,
   },
-});
+  { timeStamps: true }
+);
 export default mongoose.model("skills", skillSchema);
